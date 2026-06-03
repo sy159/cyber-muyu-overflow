@@ -1,0 +1,155 @@
+<!doctype html>
+<html lang="zh-CN">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>赛博功德林</title>
+    <link rel="stylesheet" href="styles.css">
+  </head>
+  <body class="cyber-muyu-popup">
+    <main class="popup-shell">
+      <header class="popup-header">
+        <div class="popup-title-row">
+          <div>
+            <h1 class="brand-title">赛博功德林</h1>
+            <p class="brand-subtitle">Cyber Muyu Overflow</p>
+          </div>
+          <span class="status-badge" id="enabledBadge">静默运行</span>
+        </div>
+
+        <nav class="tab-list" aria-label="插件面板">
+          <button class="tab-button is-active" data-tab="dashboard" type="button">看板</button>
+          <button class="tab-button" data-tab="rules" type="button">规则</button>
+          <button class="tab-button" data-tab="settings" type="button">设置</button>
+        </nav>
+      </header>
+
+      <section class="tab-panel is-active" id="dashboardPanel">
+        <div class="metric-card">
+          <div>
+            <div class="metric-label">今日功德</div>
+            <span class="metric-number" id="todayCount">0</span>
+          </div>
+          <div class="rank-chip" id="rankBadge">筑基期摸鱼散修</div>
+        </div>
+
+        <div class="stat-grid">
+          <div class="stat-card">
+            <div class="metric-label">白嫖资本家</div>
+            <div class="stat-value" id="moneyValue">0.00 元</div>
+          </div>
+          <div class="stat-card">
+            <div class="metric-label">总功德</div>
+            <div class="stat-value" id="totalCount">0 动</div>
+          </div>
+        </div>
+
+        <div class="panel-card" style="margin-top:12px">
+          <div class="section-label">最近命中</div>
+          <div class="recent-list" id="recentList"></div>
+        </div>
+      </section>
+
+      <section class="tab-panel" id="rulesPanel">
+        <div class="rule-form">
+          <div class="form-grid">
+            <select class="select" id="ruleType">
+              <option value="domain">域名</option>
+              <option value="regex">正则</option>
+            </select>
+            <select class="select" id="ruleCategory">
+              <option value="video">视频娱乐</option>
+              <option value="social">社交资讯</option>
+              <option value="shopping">购物种草</option>
+              <option value="community">社区论坛</option>
+              <option value="news">新闻资讯</option>
+              <option value="tech">技术摸鱼</option>
+              <option value="custom">自定义</option>
+            </select>
+          </div>
+          <input class="input" id="ruleName" placeholder="规则名称，例如 豆瓣小组">
+          <input class="input" id="rulePattern" placeholder="域名 douban.com 或正则 douban\\.com\\/group">
+          <div class="button-row">
+            <button class="button primary" id="saveRuleButton" type="button">添加规则</button>
+            <button class="button" id="cancelEditButton" type="button">取消编辑</button>
+          </div>
+          <div class="error-text" id="ruleError"></div>
+        </div>
+
+        <div class="toolbar">
+          <input class="input" id="ruleSearch" placeholder="搜索规则">
+          <select class="select" id="ruleListType">
+            <option value="rules">摸鱼规则</option>
+            <option value="exclusions">工作排除</option>
+          </select>
+        </div>
+
+        <div class="rules-list" id="rulesList"></div>
+      </section>
+
+      <section class="tab-panel" id="settingsPanel">
+        <div class="panel-card">
+          <div class="setting-row">
+            <div>
+              <div class="section-label">插件启用</div>
+              <div class="help-text">关闭后不计数、不提示。</div>
+            </div>
+            <label class="switch">
+              <input id="enabledToggle" type="checkbox">
+              <span class="slider"></span>
+            </label>
+          </div>
+
+          <div class="setting-row">
+            <div>
+              <div class="section-label">广义摸鱼模式</div>
+              <div class="help-text">除工作排除、本地开发和内网地址外，普通公开网页都可计为摸鱼。</div>
+            </div>
+            <label class="switch">
+              <input id="broadModeToggle" type="checkbox">
+              <span class="slider"></span>
+            </label>
+          </div>
+
+          <div class="setting-row">
+            <div>
+              <div class="section-label">提醒策略</div>
+              <div class="help-text">敲木鱼提醒会显示动画和随机 +1 飘字；静默计数不会打扰网页。</div>
+            </div>
+            <select class="select" id="reminderModeSelect">
+              <option value="muyu">敲木鱼提醒</option>
+              <option value="silent">静默计数</option>
+            </select>
+          </div>
+
+          <div class="setting-row">
+            <div>
+              <div class="section-label">提醒位置</div>
+              <div class="help-text">选择不挡正文的科学位置，默认右下角。</div>
+            </div>
+            <select class="select" id="reminderPositionSelect">
+              <option value="bottom-right">右下角</option>
+              <option value="bottom-left">左下角</option>
+              <option value="top-right">右上角</option>
+              <option value="top-left">左上角</option>
+              <option value="bottom-center">底部居中</option>
+              <option value="top-center">顶部居中</option>
+            </select>
+          </div>
+        </div>
+
+        <div class="panel-card" style="margin-top:12px">
+          <div class="section-label">工作网站排除</div>
+          <div class="help-text">切到“规则”页，把列表类型改成“工作排除”，即可添加公司系统、客户系统或个人工作站点。</div>
+          <div class="button-row" style="margin-top:12px">
+            <button class="button danger" id="resetButton" type="button">一键忏悔</button>
+            <button class="button" id="restoreDefaultsButton" type="button">恢复默认规则</button>
+          </div>
+        </div>
+      </section>
+    </main>
+
+    <script src="rules.js"></script>
+    <script src="popup.js"></script>
+  </body>
+</html>

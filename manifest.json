@@ -1,0 +1,32 @@
+{
+  "manifest_version": 3,
+  "name": "赛博功德林 (Cyber Muyu Overflow)",
+  "version": "1.0.0",
+  "description": "为打工人/程序员准备的全网摸鱼功德回馈插件：检测摸鱼网站，静默触发赛博木鱼，统计今日功德。",
+  "action": {
+    "default_title": "赛博功德林",
+    "default_popup": "popup.html"
+  },
+  "permissions": [
+    "storage",
+    "scripting",
+    "tabs"
+  ],
+  "host_permissions": [
+    "<all_urls>"
+  ],
+  "background": {
+    "service_worker": "background.js"
+  },
+  "web_accessible_resources": [
+    {
+      "resources": [
+        "assets/muyu.svg"
+      ],
+      "matches": [
+        "<all_urls>"
+      ]
+    }
+  ],
+  "minimum_chrome_version": "102"
+}

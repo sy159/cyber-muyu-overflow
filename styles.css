@@ -1,0 +1,766 @@
+:root {
+  --muyu-bg: #080d18;
+  --muyu-panel: #0f172a;
+  --muyu-panel-soft: #111827;
+  --muyu-line: rgba(148, 163, 184, 0.18);
+  --muyu-line-strong: rgba(134, 239, 172, 0.34);
+  --muyu-text: #f8fafc;
+  --muyu-muted: #94a3b8;
+  --muyu-green: #86efac;
+  --muyu-green-dark: #052e16;
+  --muyu-gold: #facc15;
+  --muyu-danger: #fb7185;
+}
+
+.cyber-muyu-toast {
+  all: initial;
+  position: fixed;
+  z-index: 2147483647;
+  display: block;
+  width: 280px;
+  height: 220px;
+  pointer-events: none;
+  contain: layout paint style;
+  margin: 0 !important;
+  padding: 0 !important;
+  color: #f8fafc;
+  font-family: Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+  font-size: 16px;
+  line-height: 1;
+  box-sizing: border-box;
+}
+
+.cyber-muyu-toast--bottom-right {
+  right: 22px;
+  bottom: 20px;
+}
+
+.cyber-muyu-toast--bottom-left {
+  left: 22px;
+  bottom: 20px;
+}
+
+.cyber-muyu-toast--top-right {
+  right: 22px;
+  top: 20px;
+}
+
+.cyber-muyu-toast--top-left {
+  left: 22px;
+  top: 20px;
+}
+
+.cyber-muyu-toast--bottom-center {
+  left: calc(50vw - 140px);
+  bottom: 20px;
+}
+
+.cyber-muyu-toast--top-center {
+  left: calc(50vw - 140px);
+  top: 20px;
+}
+
+.cyber-muyu-stage {
+  position: relative;
+  width: 280px;
+  height: 220px;
+  transform: translateZ(0);
+  animation: cyberMuyuStageIn 2.2s cubic-bezier(0.2, 0.9, 0.25, 1) forwards;
+}
+
+.cyber-muyu-stage *,
+.cyber-muyu-stage *::before,
+.cyber-muyu-stage *::after {
+  box-sizing: border-box;
+}
+
+.cyber-muyu-icon-surface {
+  position: absolute;
+  inset: 8px;
+  overflow: hidden;
+  border-radius: 34px;
+  background:
+    linear-gradient(120deg, rgba(255, 255, 255, 0.12) 0 13%, transparent 13% 28%, rgba(255, 255, 255, 0.08) 28% 42%, transparent 42%),
+    linear-gradient(180deg, #ff8358 0%, #f45f37 52%, #e84a2d 100%);
+  box-shadow:
+    0 20px 40px rgba(70, 24, 12, 0.24),
+    inset 0 1px 0 rgba(255, 255, 255, 0.28),
+    inset 0 -24px 40px rgba(127, 31, 18, 0.16);
+}
+
+.cyber-muyu-icon-surface::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background:
+    linear-gradient(60deg, transparent 0 32%, rgba(255, 255, 255, 0.08) 32% 33%, transparent 33% 66%, rgba(255, 255, 255, 0.07) 66% 67%, transparent 67%),
+    linear-gradient(-60deg, transparent 0 32%, rgba(255, 255, 255, 0.07) 32% 33%, transparent 33% 66%, rgba(255, 255, 255, 0.05) 66% 67%, transparent 67%);
+  background-size: 72px 72px;
+  opacity: 0.75;
+}
+
+.cyber-muyu-wave {
+  position: absolute;
+  top: 35%;
+  left: 50%;
+  z-index: 1;
+  width: 80px;
+  height: 80px;
+  margin-top: -40px;
+  margin-left: -40px;
+  border: 2px solid var(--muyu-gold);
+  border-radius: 50%;
+  opacity: 0;
+  pointer-events: none;
+  animation: cyberMuyuWaveExpand 2.2s cubic-bezier(0.1, 0.8, 0.25, 1) forwards;
+}
+
+.cyber-muyu-aura {
+  position: absolute;
+  left: 96px;
+  top: 98px;
+  width: 132px;
+  height: 78px;
+  border-radius: 50%;
+  background:
+    radial-gradient(circle, rgba(255, 245, 158, 0.6) 0 24%, transparent 56%),
+    radial-gradient(circle, rgba(255, 190, 76, 0.36), transparent 68%);
+  filter: blur(2px);
+  opacity: 0;
+  animation: cyberMuyuAuraPulse 2.2s ease-out forwards;
+}
+
+.cyber-muyu-bowl {
+  position: absolute;
+  left: 45px;
+  top: 78px;
+  width: 168px;
+  height: auto;
+  display: block;
+  border: 0;
+  user-select: none;
+  filter: drop-shadow(0 14px 12px rgba(74, 22, 11, 0.28));
+  z-index: 2;
+  transform-origin: bottom center;
+  animation: cyberMuyuBowlKnock 2.2s cubic-bezier(0.25, 0.46, 0.45, 0.94) forwards;
+}
+
+.cyber-muyu-hammer {
+  position: absolute;
+  left: 166px;
+  top: 39px;
+  width: 150px;
+  height: 74px;
+  z-index: 5;
+  transform-origin: 12px 48px;
+  animation: cyberMuyuHammerKnock 2.2s cubic-bezier(0.18, 0.89, 0.32, 1.28) forwards;
+}
+
+.cyber-muyu-hammer-handle {
+  position: absolute;
+  left: 20px;
+  top: 31px;
+  width: 126px;
+  height: 11px;
+  border-radius: 999px;
+  background:
+    linear-gradient(180deg, rgba(255, 237, 178, 0.52), transparent 43%),
+    linear-gradient(90deg, #f3c370, #c98335 64%, #7f421f);
+  box-shadow:
+    inset 0 1px 0 rgba(255, 244, 194, 0.52),
+    0 2px 5px rgba(82, 30, 12, 0.25);
+  transform: rotate(18deg);
+  transform-origin: 5px 50%;
+}
+
+.cyber-muyu-hammer-head {
+  position: absolute;
+  left: 0;
+  top: 15px;
+  width: 38px;
+  height: 38px;
+  border-radius: 50%;
+  background:
+    radial-gradient(circle at 34% 30%, #fff1b7 0 22%, transparent 23%),
+    linear-gradient(145deg, #f4d993 0%, #d0a45d 46%, #926334 100%);
+  box-shadow:
+    inset 0 6px 10px rgba(255, 245, 195, 0.45),
+    inset 0 -8px 10px rgba(91, 56, 24, 0.32),
+    0 4px 9px rgba(68, 24, 11, 0.22);
+}
+
+.cyber-muyu-reward-float {
+  position: absolute;
+  left: 28px;
+  top: 48px;
+  color: #ffe7b0;
+  font-size: 26px;
+  font-weight: 950;
+  line-height: 1.1;
+  white-space: nowrap;
+  text-shadow:
+    0 2px 0 rgba(119, 36, 18, 0.45),
+    0 0 14px rgba(255, 235, 170, 0.5);
+  z-index: 4;
+  animation: cyberMuyuRewardFloat 2.2s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards;
+}
+
+.cyber-muyu-reward-stack {
+  position: absolute;
+  left: 27px;
+  top: 70px;
+  display: grid;
+  gap: 0;
+  color: rgba(255, 230, 181, 0.68);
+  font-size: 22px;
+  font-weight: 950;
+  line-height: 0.92;
+  text-shadow: 0 2px 0 rgba(123, 36, 16, 0.3);
+  z-index: 3;
+  animation: cyberMuyuRewardStack 2.2s ease forwards;
+}
+
+.cyber-muyu-reward-stack span {
+  display: block;
+}
+
+.cyber-muyu-caption {
+  position: absolute;
+  left: 28px;
+  right: 24px;
+  bottom: 4px;
+  color: rgba(255, 238, 190, 0.78);
+  font-size: 12px;
+  font-weight: 850;
+  line-height: 1.18;
+  text-align: center;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  text-shadow:
+    0 1px 0 rgba(119, 36, 18, 0.54),
+    0 0 10px rgba(255, 202, 92, 0.28);
+  animation: cyberMuyuCaptionFade 2.2s ease forwards;
+}
+
+@keyframes cyberMuyuStageIn {
+  0% {
+    opacity: 0;
+    transform: translate3d(0, 12px, 0) scale(0.92);
+  }
+  14% {
+    opacity: 1;
+    transform: translate3d(0, 0, 0) scale(1);
+  }
+  88% {
+    opacity: 1;
+    transform: translate3d(0, 0, 0) scale(1);
+  }
+  100% {
+    opacity: 0;
+    transform: translate3d(0, -10px, 0) scale(0.98);
+  }
+}
+
+@keyframes cyberMuyuHammerKnock {
+  0% {
+    opacity: 0;
+    transform: rotate(-40deg) translate3d(-10px, -15px, 0);
+  }
+  9% {
+    opacity: 1;
+    transform: rotate(-30deg) translate3d(0, 0, 0);
+  }
+  18% {
+    transform: rotate(20deg) translate3d(5px, 10px, 0);
+  }
+  21% {
+    transform: rotate(-12deg) translate3d(-2px, -3px, 0);
+  }
+  27% {
+    transform: rotate(3deg) translate3d(1px, 2px, 0);
+  }
+  36%,
+  100% {
+    opacity: 1;
+    transform: rotate(0deg) translate3d(0, 0, 0);
+  }
+}
+
+@keyframes cyberMuyuBowlKnock {
+  0%,
+  16% {
+    transform: scale3d(1, 1, 1) translateY(0);
+  }
+  18% {
+    transform: scale3d(1.15, 0.8, 1) translateY(4px);
+  }
+  21% {
+    transform: scale3d(0.92, 1.1, 1) translateY(-3px);
+  }
+  26% {
+    transform: scale3d(1.04, 0.96, 1) translateY(0);
+  }
+  32%,
+  100% {
+    transform: scale3d(1, 1, 1) translateY(0);
+  }
+}
+
+@keyframes cyberMuyuAuraPulse {
+  0%,
+  16% {
+    opacity: 0;
+    transform: scale(0.3);
+    filter: blur(0);
+  }
+  18% {
+    opacity: 1;
+    transform: scale(1);
+    filter: blur(1px);
+  }
+  56% {
+    opacity: 0.5;
+    transform: scale(1.6);
+    filter: blur(4px);
+  }
+  100% {
+    opacity: 0;
+    transform: scale(2.2);
+    filter: blur(8px);
+  }
+}
+
+@keyframes cyberMuyuWaveExpand {
+  0%,
+  16% {
+    opacity: 0;
+    transform: scale(0.2);
+    border-width: 4px;
+  }
+  18% {
+    opacity: 0.8;
+    transform: scale(0.3);
+    border-width: 3px;
+  }
+  78% {
+    opacity: 0;
+    transform: scale(2);
+    border-width: 1px;
+  }
+  100% {
+    opacity: 0;
+  }
+}
+
+@keyframes cyberMuyuRewardFloat {
+  0%,
+  16% {
+    opacity: 0;
+    transform: translate3d(-8px, 22px, 0) scale(0.62);
+  }
+  18% {
+    opacity: 1;
+    transform: translate3d(0, 8px, 0) scale(1.3);
+  }
+  23% {
+    transform: translate3d(0, 0, 0) scale(1);
+  }
+  84% {
+    opacity: 1;
+    transform: translate3d(0, -30px, 0) scale(1);
+  }
+  100% {
+    opacity: 0;
+    transform: translate3d(0, -55px, 0) scale(0.9);
+  }
+}
+
+@keyframes cyberMuyuRewardStack {
+  0%,
+  16% {
+    opacity: 0;
+    transform: translate3d(-6px, 18px, 0);
+  }
+  18% {
+    opacity: 0.8;
+    transform: translate3d(0, 8px, 0);
+  }
+  78% {
+    opacity: 0.58;
+    transform: translate3d(0, -3px, 0);
+  }
+  100% {
+    opacity: 0;
+    transform: translate3d(0, -20px, 0);
+  }
+}
+
+@keyframes cyberMuyuCaptionFade {
+  0%,
+  12% {
+    opacity: 0;
+    transform: translateY(4px);
+  }
+  20%,
+  84% {
+    opacity: 1;
+    transform: translateY(0);
+  }
+  100% {
+    opacity: 0;
+    transform: translateY(-2px);
+  }
+}
+
+body.cyber-muyu-popup *,
+body.cyber-muyu-popup *::before,
+body.cyber-muyu-popup *::after {
+  box-sizing: border-box;
+}
+
+body.cyber-muyu-popup {
+  width: 420px;
+  min-height: 620px;
+  margin: 0;
+  background: var(--muyu-bg);
+  color: var(--muyu-text);
+  font-family: Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+}
+
+.popup-shell {
+  min-height: 620px;
+  background:
+    radial-gradient(circle at 12% 0%, rgba(34, 197, 94, 0.12), transparent 32%),
+    linear-gradient(180deg, #0b1120 0%, #070b14 100%);
+}
+
+.popup-header {
+  padding: 16px;
+  border-bottom: 1px solid var(--muyu-line);
+}
+
+.popup-title-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+}
+
+.brand-title {
+  margin: 0;
+  color: var(--muyu-text);
+  font-size: 19px;
+  font-weight: 900;
+  line-height: 1.15;
+  letter-spacing: 0;
+}
+
+.brand-subtitle {
+  margin: 5px 0 0;
+  color: var(--muyu-muted);
+  font-size: 12px;
+}
+
+.status-badge {
+  flex: 0 0 auto;
+  padding: 5px 9px;
+  border-radius: 999px;
+  color: var(--muyu-green);
+  background: rgba(34, 197, 94, 0.12);
+  border: 1px solid rgba(134, 239, 172, 0.22);
+  font-size: 11px;
+  font-weight: 850;
+}
+
+.tab-list {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 8px;
+  margin-top: 14px;
+}
+
+.tab-button {
+  height: 34px;
+  border: 1px solid transparent;
+  border-radius: 8px;
+  background: rgba(148, 163, 184, 0.08);
+  color: var(--muyu-muted);
+  cursor: pointer;
+  font: inherit;
+  font-size: 13px;
+  font-weight: 800;
+}
+
+.tab-button.is-active {
+  background: var(--muyu-green);
+  color: var(--muyu-green-dark);
+}
+
+.tab-panel {
+  display: none;
+  padding: 16px;
+}
+
+.tab-panel.is-active {
+  display: block;
+}
+
+.metric-card {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto;
+  align-items: end;
+  gap: 12px;
+  padding: 16px;
+  border: 1px solid var(--muyu-line-strong);
+  border-radius: 12px;
+  background: rgba(15, 23, 42, 0.78);
+  box-shadow: 0 18px 44px rgba(0, 0, 0, 0.22);
+}
+
+.metric-label,
+.section-label,
+.field-label {
+  color: var(--muyu-muted);
+  font-size: 12px;
+  font-weight: 750;
+}
+
+.metric-number {
+  display: block;
+  margin-top: 7px;
+  color: var(--muyu-green);
+  font-size: 48px;
+  font-weight: 950;
+  line-height: 0.92;
+  font-variant-numeric: tabular-nums;
+}
+
+.rank-chip {
+  max-width: 160px;
+  padding: 6px 9px;
+  border-radius: 999px;
+  color: #fde68a;
+  background: rgba(250, 204, 21, 0.12);
+  font-size: 11px;
+  font-weight: 850;
+  line-height: 1.25;
+  text-align: right;
+}
+
+.stat-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 10px;
+  margin-top: 12px;
+}
+
+.stat-card,
+.panel-card {
+  padding: 13px;
+  border: 1px solid var(--muyu-line);
+  border-radius: 12px;
+  background: rgba(15, 23, 42, 0.7);
+}
+
+.stat-value {
+  margin-top: 7px;
+  color: var(--muyu-text);
+  font-size: 19px;
+  font-weight: 900;
+  font-variant-numeric: tabular-nums;
+}
+
+.recent-list,
+.rules-list {
+  display: grid;
+  gap: 8px;
+  margin-top: 12px;
+}
+
+.recent-item,
+.rule-item {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto;
+  align-items: center;
+  gap: 10px;
+  min-height: 48px;
+  padding: 10px 0;
+  border-bottom: 1px solid rgba(148, 163, 184, 0.12);
+}
+
+.recent-host,
+.rule-name {
+  color: var(--muyu-text);
+  font-size: 13px;
+  font-weight: 850;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.recent-meta,
+.rule-meta,
+.help-text {
+  margin-top: 4px;
+  color: var(--muyu-muted);
+  font-size: 11px;
+  line-height: 1.45;
+}
+
+.pill {
+  padding: 4px 7px;
+  border-radius: 999px;
+  color: var(--muyu-green);
+  background: rgba(34, 197, 94, 0.12);
+  font-size: 10px;
+  font-weight: 850;
+}
+
+.toolbar {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto;
+  gap: 8px;
+  margin-bottom: 12px;
+}
+
+.rule-form {
+  display: grid;
+  gap: 8px;
+  padding: 12px;
+  border: 1px solid var(--muyu-line);
+  border-radius: 12px;
+  background: rgba(15, 23, 42, 0.7);
+}
+
+.form-grid {
+  display: grid;
+  grid-template-columns: 0.85fr 1.15fr;
+  gap: 8px;
+}
+
+.input,
+.select {
+  width: 100%;
+  height: 34px;
+  border: 1px solid rgba(148, 163, 184, 0.2);
+  border-radius: 8px;
+  background: rgba(2, 6, 23, 0.68);
+  color: var(--muyu-text);
+  padding: 0 10px;
+  font: inherit;
+  font-size: 12px;
+}
+
+.input::placeholder {
+  color: #64748b;
+}
+
+.button-row {
+  display: flex;
+  gap: 8px;
+}
+
+.button {
+  min-height: 34px;
+  border: 1px solid rgba(134, 239, 172, 0.26);
+  border-radius: 8px;
+  background: rgba(34, 197, 94, 0.12);
+  color: var(--muyu-text);
+  cursor: pointer;
+  font: inherit;
+  font-size: 12px;
+  font-weight: 850;
+  padding: 0 11px;
+}
+
+.button.primary {
+  background: var(--muyu-green);
+  color: var(--muyu-green-dark);
+}
+
+.button.danger {
+  border-color: rgba(251, 113, 133, 0.28);
+  background: rgba(251, 113, 133, 0.12);
+  color: #fecdd3;
+}
+
+.icon-button {
+  width: 30px;
+  height: 30px;
+  border: 1px solid var(--muyu-line);
+  border-radius: 8px;
+  background: rgba(148, 163, 184, 0.08);
+  color: var(--muyu-text);
+  cursor: pointer;
+  font-size: 12px;
+  font-weight: 900;
+}
+
+.rule-actions {
+  display: flex;
+  gap: 6px;
+}
+
+.setting-row {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto;
+  align-items: center;
+  gap: 12px;
+  padding: 12px 0;
+  border-bottom: 1px solid rgba(148, 163, 184, 0.12);
+}
+
+.switch {
+  position: relative;
+  width: 42px;
+  height: 24px;
+}
+
+.switch input {
+  position: absolute;
+  opacity: 0;
+}
+
+.slider {
+  position: absolute;
+  inset: 0;
+  border-radius: 999px;
+  background: rgba(148, 163, 184, 0.2);
+  cursor: pointer;
+}
+
+.slider::before {
+  content: "";
+  position: absolute;
+  top: 3px;
+  left: 3px;
+  width: 18px;
+  height: 18px;
+  border-radius: 50%;
+  background: #e2e8f0;
+  transition: transform 0.16s ease;
+}
+
+.switch input:checked + .slider {
+  background: rgba(34, 197, 94, 0.7);
+}
+
+.switch input:checked + .slider::before {
+  transform: translateX(18px);
+}
+
+.empty-state {
+  padding: 18px;
+  border: 1px dashed rgba(148, 163, 184, 0.28);
+  border-radius: 12px;
+  color: var(--muyu-muted);
+  text-align: center;
+  font-size: 12px;
+}
+
+.error-text {
+  min-height: 16px;
+  color: var(--muyu-danger);
+  font-size: 11px;
+}

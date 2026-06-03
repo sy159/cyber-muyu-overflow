@@ -7,6 +7,25 @@
 
   const TOAST_LIFETIME_MS = 2200;
   const POSITIONS = new Set(["bottom-right", "bottom-left", "top-right", "top-left", "bottom-center", "top-center"]);
+  const RARITIES = new Set(["common", "rare", "epic"]);
+  const PARTICLE_PRESETS = [
+    { glyph: "", kind: "coin", x: -52, y: -48 },
+    { glyph: "1", x: -24, y: -64 },
+    { glyph: "0", x: 12, y: -58 },
+    { glyph: "+", x: 44, y: -42 },
+    { glyph: "", kind: "coin", x: -42, y: -20 },
+    { glyph: "1", x: 35, y: -12 },
+    { glyph: "0", x: -8, y: -76 },
+    { glyph: "+", x: 62, y: -26 },
+    { glyph: "", kind: "coin", x: -68, y: -8 },
+    { glyph: "0", x: 74, y: -5 },
+    { glyph: "*", x: -18, y: -96 },
+    { glyph: "+", x: 20, y: -90 },
+    { glyph: "", kind: "coin", x: -76, y: -35 },
+    { glyph: "0", x: 82, y: -38 },
+    { glyph: "", kind: "coin", x: -4, y: -108 },
+    { glyph: "", kind: "coin", x: 54, y: -70 }
+  ];
 
   window.renderCyberMuyuToast = function renderCyberMuyuToast(payload = {}) {
     const previous = document.querySelector(".cyber-muyu-toast");
@@ -15,6 +34,8 @@
     }
 
     const position = POSITIONS.has(payload.position) ? payload.position : "bottom-right";
+    const rewardText = payload.reward || "快乐 +1";
+    const rarity = RARITIES.has(payload.rarity) ? payload.rarity : "common";
     const toast = document.createElement("div");
     toast.className = `cyber-muyu-toast cyber-muyu-toast--${position}`;
     toast.setAttribute("role", "status");
@@ -31,6 +52,15 @@
 
     const aura = document.createElement("div");
     aura.className = "cyber-muyu-aura";
+
+    const impactFlash = document.createElement("div");
+    impactFlash.className = "cyber-muyu-impact-flash";
+
+    const particles = document.createElement("div");
+    particles.className = "cyber-muyu-particles";
+    PARTICLE_PRESETS.forEach((preset, index) => {
+      particles.appendChild(createParticle(preset, index, rarity));
+    });
 
     const bowl = document.createElement("img");
     bowl.className = "cyber-muyu-bowl";
@@ -51,14 +81,15 @@
     hammer.append(hammerHandle, hammerHead);
 
     const reward = document.createElement("div");
-    reward.className = "cyber-muyu-reward-float";
-    reward.textContent = payload.reward || "功德 +1";
+    reward.className = `cyber-muyu-reward-float cyber-muyu-reward-float--${rarity}`;
+    reward.style.setProperty("--reward-curve-x", `${getRewardCurveX()}px`);
+    reward.textContent = rewardText;
 
     const rewardStack = document.createElement("div");
-    rewardStack.className = "cyber-muyu-reward-stack";
+    rewardStack.className = `cyber-muyu-reward-stack cyber-muyu-reward-stack--${rarity}`;
     for (let index = 0; index < 3; index += 1) {
       const echo = document.createElement("span");
-      echo.textContent = payload.reward || "功德 +1";
+      echo.textContent = rewardText;
       rewardStack.appendChild(echo);
     }
 
@@ -66,7 +97,7 @@
     caption.className = "cyber-muyu-caption";
     caption.textContent = payload.title || "赛博木鱼轻轻点头";
 
-    iconSurface.append(wave, aura, rewardStack, reward, bowl, hammer, caption);
+    iconSurface.append(wave, aura, impactFlash, particles, rewardStack, reward, bowl, hammer, caption);
     stage.appendChild(iconSurface);
     toast.appendChild(stage);
     document.body.appendChild(toast);
@@ -75,4 +106,19 @@
       toast.remove();
     }, TOAST_LIFETIME_MS);
   };
+
+  function createParticle(preset, index, rarity) {
+    const particle = document.createElement("span");
+    particle.className = `cyber-muyu-particle cyber-muyu-particle--${rarity} cyber-muyu-particle--${preset.kind || "code"}`;
+    particle.textContent = preset.glyph || "";
+    particle.style.setProperty("--particle-x", `${preset.x}px`);
+    particle.style.setProperty("--particle-y", `${preset.y}px`);
+    particle.style.setProperty("--particle-delay", `${index * 18}ms`);
+    particle.style.setProperty("--particle-spin", `${index % 2 === 0 ? 28 : -28}deg`);
+    return particle;
+  }
+
+  function getRewardCurveX() {
+    return Math.round((Math.random() * 44) - 22);
+  }
 })();

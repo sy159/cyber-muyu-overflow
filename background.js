@@ -14,26 +14,52 @@ importScripts("rules.js");
   const recentNavigations = new Map();
   let storageMutationQueue = Promise.resolve();
   const REWARD_TOKENS = [
-    "有钱 +1",
-    "快乐 +1",
-    "健康 +1",
-    "余额 +1",
-    "自由 +1",
-    "松弛 +1",
-    "好运 +1",
-    "续命 +1",
-    "回血 +1",
-    "白嫖 +1",
-    "精神补偿 +1",
-    "带薪呼吸 +1",
-    "反内耗 +1",
-    "下班能量 +1",
-    "摸鱼熟练度 +1",
-    "今日小确幸 +1",
-    "钱包幻想 +1",
-    "灵魂亮度 +1",
-    "工位隐身 +1",
-    "需求免疫 +1"
+    { label: "快乐 +1", rarity: "common" },
+    { label: "健康 +1", rarity: "common" },
+    { label: "自由 +1", rarity: "common" },
+    { label: "松弛 +1", rarity: "common" },
+    { label: "好运 +1", rarity: "common" },
+    { label: "续命 +1", rarity: "common" },
+    { label: "回血 +1", rarity: "common" },
+    { label: "白嫖 +1", rarity: "common" },
+    { label: "福报 +1", rarity: "common" },
+    { label: "心情 +1", rarity: "common" },
+    { label: "灵魂亮度 +1", rarity: "common" },
+    { label: "摸鱼能量 +1", rarity: "common" },
+    { label: "呼吸自由 +1", rarity: "common" },
+    { label: "心态稳定 +1", rarity: "common" },
+    { label: "灵感 +1", rarity: "common" },
+    { label: "微笑 +1", rarity: "common" },
+    { label: "低调 +1", rarity: "common" },
+    { label: "安宁 +1", rarity: "common" },
+    { label: "清醒 +1", rarity: "common" },
+    { label: "手速 +1", rarity: "common" },
+    { label: "闲庭信步 +1", rarity: "common" },
+    { label: "带薪呼吸 +1", rarity: "rare" },
+    { label: "反内耗 +1", rarity: "rare" },
+    { label: "下班能量 +1", rarity: "rare" },
+    { label: "情绪回血 +1", rarity: "rare" },
+    { label: "工位隐身 +1", rarity: "rare" },
+    { label: "摸鱼熟练度 +1", rarity: "rare" },
+    { label: "脑细胞续命 +1", rarity: "rare" },
+    { label: "会议闪避 +1", rarity: "rare" },
+    { label: "需求延迟 +1", rarity: "rare" },
+    { label: "工位结界 +1", rarity: "rare" },
+    { label: "心流续航 +1", rarity: "rare" },
+    { label: "情绪护盾 +1", rarity: "rare" },
+    { label: "KPI 静默 +1", rarity: "rare" },
+    { label: "老板盲区 +1", rarity: "rare" },
+    { label: "需求免疫 +1", rarity: "epic" },
+    { label: "会议免疫 +1", rarity: "epic" },
+    { label: "Bug 远离 +1", rarity: "epic" },
+    { label: "灵魂发光 +1", rarity: "epic" },
+    { label: "心态飞升 +1", rarity: "epic" },
+    { label: "摸鱼真气 +1", rarity: "epic" },
+    { label: "赛博飞升 +1", rarity: "epic" },
+    { label: "今日无事 +1", rarity: "epic" },
+    { label: "代码免疫 +1", rarity: "epic" },
+    { label: "灵魂出窍 +1", rarity: "epic" },
+    { label: "截止期延后 +1", rarity: "epic" }
   ];
   const TOAST_MESSAGES = [
     { title: "今日敲击到账", detail: "{reward} · 今日 {count} 动" },
@@ -48,9 +74,19 @@ importScripts("rules.js");
     { title: "已进入低功耗修仙", detail: "{reward} · 带薪呼吸稳定" },
     { title: "检测到战略性休息", detail: "{reward} · 脑细胞续命" },
     { title: "老板视野外活动成功", detail: "{reward} · 操作干净利落" },
-    { title: "今日福报余额上涨", detail: "{reward} · 继续保持安静" },
+    { title: "今日福报灵光上涨", detail: "{reward} · 继续保持安静" },
     { title: "摸鱼姿势被系统认可", detail: "{reward} · 页面已记录" },
-    { title: "需求暂时追不上你", detail: "{reward} · 心率稳定" }
+    { title: "需求暂时追不上你", detail: "{reward} · 心率稳定" },
+    { title: "键盘声保持专业", detail: "{reward} · 灵魂正在透气" },
+    { title: "短暂进入低调模式", detail: "{reward} · 页面风平浪静" },
+    { title: "工位结界悄悄展开", detail: "{reward} · 外界干扰下降" },
+    { title: "系统检测到自我关怀", detail: "{reward} · 不算摸鱼，算续航" },
+    { title: "赛博木鱼产生共鸣", detail: "{reward} · 嗡的一下很安静" },
+    { title: "今日精神损耗回收", detail: "{reward} · 心态没有塌" },
+    { title: "你成功绕开一段内耗", detail: "{reward} · 线路稳定" },
+    { title: "老板雷达进入盲区", detail: "{reward} · 动作轻得像缓存" },
+    { title: "需求文档暂时闭嘴", detail: "{reward} · 呼吸恢复正常" },
+    { title: "打工魂短暂开小差", detail: "{reward} · 肉身仍在工位" }
   ];
 
   chrome.runtime.onInstalled.addListener(async () => {
@@ -88,7 +124,7 @@ importScripts("rules.js");
 
     injectToast(tabId, {
       title: "今日敲击到账",
-      detail: "有钱 +1 · 今日预览",
+      detail: "快乐 +1 · 今日预览",
       category: "preview"
     }).then(() => sendResponse({ ok: true }));
 
@@ -253,13 +289,28 @@ importScripts("rules.js");
 
   function createToastPayload(count, evaluation, position) {
     const template = getRandomItem(TOAST_MESSAGES);
-    const reward = getRandomItem(REWARD_TOKENS);
+    const rewardToken = normalizeRewardToken(getRandomItem(REWARD_TOKENS));
     return {
-      title: fillToastTemplate(template.title, count, reward),
-      detail: fillToastTemplate(template.detail, count, reward),
-      reward,
+      title: fillToastTemplate(template.title, count, rewardToken.label),
+      detail: fillToastTemplate(template.detail, count, rewardToken.label),
+      reward: rewardToken.label,
+      rarity: rewardToken.rarity,
       position,
       category: evaluation.rule?.category || "moyu"
+    };
+  }
+
+  function normalizeRewardToken(token) {
+    if (typeof token === "string") {
+      return {
+        label: token,
+        rarity: "common"
+      };
+    }
+
+    return {
+      label: String(token?.label || "快乐 +1"),
+      rarity: ["common", "rare", "epic"].includes(token?.rarity) ? token.rarity : "common"
     };
   }
 

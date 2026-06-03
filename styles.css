@@ -130,6 +130,81 @@
   animation: cyberMuyuAuraPulse 2.2s ease-out forwards;
 }
 
+.cyber-muyu-impact-flash {
+  position: absolute;
+  left: 151px;
+  top: 80px;
+  z-index: 7;
+  width: 58px;
+  height: 58px;
+  border-radius: 50%;
+  opacity: 0;
+  pointer-events: none;
+  background:
+    radial-gradient(circle, rgba(255, 255, 255, 0.82) 0 9%, rgba(255, 239, 160, 0.64) 10% 22%, transparent 56%),
+    conic-gradient(from 12deg, transparent 0 12%, rgba(255, 242, 153, 0.78) 12% 15%, transparent 15% 32%, rgba(255, 255, 255, 0.62) 32% 35%, transparent 35% 58%, rgba(255, 220, 98, 0.58) 58% 61%, transparent 61%);
+  filter: drop-shadow(0 0 9px rgba(255, 230, 116, 0.5));
+  transform: scale(0.2) rotate(0deg);
+  animation: cyberMuyuImpactFlash 2.2s cubic-bezier(0.14, 0.78, 0.24, 1) forwards;
+}
+
+.cyber-muyu-particles {
+  position: absolute;
+  left: 178px;
+  top: 90px;
+  z-index: 6;
+  width: 1px;
+  height: 1px;
+  pointer-events: none;
+}
+
+.cyber-muyu-particle {
+  position: absolute;
+  left: 0;
+  top: 0;
+  display: block;
+  color: #e9fff0;
+  font-size: 14px;
+  font-weight: 950;
+  line-height: 1;
+  opacity: 0;
+  text-shadow:
+    0 0 8px rgba(134, 239, 172, 0.65),
+    0 1px 0 rgba(42, 20, 6, 0.35);
+  transform: translate3d(0, 0, 0) scale(0.4);
+  animation: cyberMuyuParticleBurst 2.2s cubic-bezier(0.12, 0.76, 0.28, 1) forwards;
+  animation-delay: var(--particle-delay, 0ms);
+}
+
+.cyber-muyu-particle--rare {
+  color: #fff0a8;
+  text-shadow:
+    0 0 10px rgba(250, 204, 21, 0.85),
+    0 1px 0 rgba(89, 45, 8, 0.42);
+}
+
+.cyber-muyu-particle--epic {
+  color: #ffd2f3;
+  text-shadow:
+    0 0 12px rgba(255, 148, 222, 0.88),
+    0 0 18px rgba(250, 204, 21, 0.58),
+    0 1px 0 rgba(89, 24, 50, 0.45);
+}
+
+.cyber-muyu-particle--coin {
+  width: 12px;
+  height: 12px;
+  border-radius: 50%;
+  color: transparent;
+  background:
+    radial-gradient(circle at 35% 30%, #fff8c7 0 18%, transparent 19%),
+    linear-gradient(145deg, #fde68a 0%, #facc15 46%, #d97706 100%);
+  box-shadow:
+    inset 0 1px 0 rgba(255, 255, 255, 0.58),
+    inset 0 -2px 3px rgba(120, 53, 15, 0.32),
+    0 0 12px rgba(250, 204, 21, 0.82);
+}
+
 .cyber-muyu-bowl {
   position: absolute;
   left: 45px;
@@ -205,6 +280,28 @@
   animation: cyberMuyuRewardFloat 2.2s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards;
 }
 
+.cyber-muyu-reward-float--rare {
+  color: #fff1a8;
+  text-shadow:
+    0 2px 0 rgba(119, 57, 8, 0.42),
+    0 0 14px rgba(250, 204, 21, 0.85),
+    0 0 24px rgba(255, 237, 137, 0.48);
+}
+
+.cyber-muyu-reward-float--epic {
+  color: #ffd7f0;
+  text-shadow:
+    0 2px 0 rgba(119, 36, 18, 0.42),
+    0 0 14px rgba(255, 148, 222, 0.78),
+    0 0 26px rgba(250, 204, 21, 0.72),
+    0 0 38px rgba(255, 255, 255, 0.36);
+  animation-name: cyberMuyuRewardFloat, cyberMuyuEpicRewardGlow;
+  animation-duration: 2.2s, 0.42s;
+  animation-timing-function: cubic-bezier(0.175, 0.885, 0.32, 1.275), ease-in-out;
+  animation-iteration-count: 1, 4;
+  animation-fill-mode: forwards, both;
+}
+
 .cyber-muyu-reward-stack {
   position: absolute;
   left: 27px;
@@ -222,6 +319,14 @@
 
 .cyber-muyu-reward-stack span {
   display: block;
+}
+
+.cyber-muyu-reward-stack--rare {
+  color: rgba(255, 239, 157, 0.72);
+}
+
+.cyber-muyu-reward-stack--epic {
+  color: rgba(255, 211, 239, 0.74);
 }
 
 .cyber-muyu-caption {
@@ -290,20 +395,20 @@
 @keyframes cyberMuyuBowlKnock {
   0%,
   16% {
-    transform: scale3d(1, 1, 1) translateY(0);
+    transform: scale3d(1, 1, 1) translate3d(0, 0, 0) rotate(0deg);
   }
   18% {
-    transform: scale3d(1.15, 0.8, 1) translateY(4px);
+    transform: scale3d(0.92, 0.92, 1) translate3d(3px, 4px, 0) rotate(-2deg);
   }
   21% {
-    transform: scale3d(0.92, 1.1, 1) translateY(-3px);
+    transform: scale3d(1.06, 1.06, 1) translate3d(-2px, -4px, 0) rotate(1.4deg);
   }
   26% {
-    transform: scale3d(1.04, 0.96, 1) translateY(0);
+    transform: scale3d(0.98, 1.02, 1) translate3d(1px, 1px, 0) rotate(-0.8deg);
   }
   32%,
   100% {
-    transform: scale3d(1, 1, 1) translateY(0);
+    transform: scale3d(1, 1, 1) translate3d(0, 0, 0) rotate(0deg);
   }
 }
 
@@ -353,6 +458,30 @@
   }
 }
 
+@keyframes cyberMuyuImpactFlash {
+  0%,
+  16% {
+    opacity: 0;
+    transform: scale(0.18) rotate(-12deg);
+  }
+  18% {
+    opacity: 0.78;
+    transform: scale(0.96) rotate(8deg);
+  }
+  24% {
+    opacity: 0.45;
+    transform: scale(0.82) rotate(-4deg);
+  }
+  42% {
+    opacity: 0;
+    transform: scale(1.42) rotate(18deg);
+  }
+  100% {
+    opacity: 0;
+    transform: scale(1.42) rotate(18deg);
+  }
+}
+
 @keyframes cyberMuyuRewardFloat {
   0%,
   16% {
@@ -368,11 +497,55 @@
   }
   84% {
     opacity: 1;
-    transform: translate3d(0, -30px, 0) scale(1);
+    transform: translate3d(var(--reward-curve-x, 0px), -30px, 0) scale(1);
   }
   100% {
     opacity: 0;
-    transform: translate3d(0, -55px, 0) scale(0.9);
+    transform: translate3d(var(--reward-curve-x, 0px), -55px, 0) scale(0.9);
+  }
+}
+
+@keyframes cyberMuyuParticleBurst {
+  0%,
+  16% {
+    opacity: 0;
+    transform: translate3d(0, 0, 0) scale(0.35) rotate(0deg);
+  }
+  18% {
+    opacity: 1;
+    transform: translate3d(0, 0, 0) scale(1.15) rotate(0deg);
+  }
+  48% {
+    opacity: 1;
+    transform:
+      translate3d(
+        var(--particle-x, 0px),
+        var(--particle-y, -40px),
+        0
+      )
+      scale(1)
+      rotate(var(--particle-spin, 18deg));
+  }
+  100% {
+    opacity: 0;
+    transform:
+      translate3d(
+        var(--particle-x, 0px),
+        calc(var(--particle-y, -40px) + 18px),
+        0
+      )
+      scale(0.72)
+      rotate(var(--particle-spin, 18deg));
+  }
+}
+
+@keyframes cyberMuyuEpicRewardGlow {
+  0%,
+  100% {
+    filter: brightness(1);
+  }
+  50% {
+    filter: brightness(1.35);
   }
 }
 

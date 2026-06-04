@@ -15,9 +15,16 @@ async function main() {
   const background = readRequiredFile("background.js");
   const rules = readRequiredFile("rules.js");
   const muyuAsset = readRequiredFile("assets/muyu.svg");
+  readRequiredFile("assets/icon-source.png");
+  readRequiredFile("assets/icon-source-transparent.png");
+  ["16", "32", "48", "128"].forEach((size) => {
+    readRequiredFile(`assets/icon-${size}.png`);
+  });
 
   assert(!manifest.content_scripts, "manifest must not use always-on content scripts");
   assert(manifest.background?.service_worker === "background.js", "manifest must register background service worker");
+  assert(manifest.icons?.["128"] === "assets/icon-128.png", "manifest must define extension icons");
+  assert(manifest.action?.default_icon?.["32"] === "assets/icon-32.png", "manifest action must define toolbar icons");
   assert(manifest.permissions.includes("storage"), "manifest must keep storage permission");
   assert(manifest.permissions.includes("scripting"), "manifest must include scripting permission for on-demand injection");
   assert(manifest.permissions.includes("tabs"), "manifest must include tabs permission for URL evaluation");

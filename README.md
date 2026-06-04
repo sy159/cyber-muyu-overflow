@@ -20,7 +20,20 @@
 - 敲木鱼提醒包含轻量敲击动作和随机 `xx +1` 飘字。
 - 提醒位置可选右下角、左下角、右上角、左上角、底部居中和顶部居中。
 
-## 安装测试
+## 安装
+
+### 从 Release 安装
+
+1. 在 GitHub 仓库右侧进入 `Releases`，下载最新版本的 `cyber-muyu-overflow.zip`。
+2. 解压 `cyber-muyu-overflow.zip`。
+3. 打开 Chrome 或 Edge。
+4. 访问 `chrome://extensions/`。
+5. 打开右上角“开发者模式”。
+6. 点击“加载已解压的扩展程序”。
+7. 选择刚刚解压出来的 `cyber-muyu-overflow` 文件夹。
+8. 功德 +1，成功起飞。
+
+### 从源码安装
 
 1. 打开 Chrome。
 2. 访问 `chrome://extensions/`。
@@ -46,7 +59,12 @@
 ├── popup.js             # 看板、规则管理和设置逻辑
 ├── styles.css           # Toast 和 Popup UI 样式
 ├── assets/
-│   └── muyu.svg         # 木鱼主体 SVG 视觉资产
+│   ├── muyu.svg         # 木鱼主体 SVG 视觉资产
+│   ├── icon-16.png      # 扩展图标
+│   ├── icon-32.png      # 扩展图标
+│   ├── icon-48.png      # 扩展图标
+│   ├── icon-128.png     # 扩展图标
+│   └── icon-source-transparent.png
 ├── verify-extension.js  # 本地规则与回归校验脚本
 └── LICENSE
 ```

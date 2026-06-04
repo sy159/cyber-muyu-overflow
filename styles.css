@@ -14,13 +14,13 @@
 
 .cyber-muyu-toast {
   all: initial;
-  position: fixed;
-  z-index: 2147483647;
-  display: block;
-  width: 280px;
-  height: 220px;
-  pointer-events: none;
-  contain: layout paint style;
+  position: fixed !important;
+  z-index: 2147483647 !important;
+  display: block !important;
+  width: 280px !important;
+  height: 220px !important;
+  pointer-events: none !important;
+  contain: layout paint style !important;
   margin: 0 !important;
   padding: 0 !important;
   color: #f8fafc;
@@ -31,39 +31,48 @@
 }
 
 .cyber-muyu-toast--bottom-right {
-  right: 22px;
-  bottom: 20px;
+  right: 22px !important;
+  bottom: 20px !important;
 }
 
 .cyber-muyu-toast--bottom-left {
-  left: 22px;
-  bottom: 20px;
+  left: 22px !important;
+  bottom: 20px !important;
 }
 
 .cyber-muyu-toast--top-right {
-  right: 22px;
-  top: 20px;
+  right: 22px !important;
+  top: 20px !important;
 }
 
 .cyber-muyu-toast--top-left {
-  left: 22px;
-  top: 20px;
+  left: 22px !important;
+  top: 20px !important;
 }
 
 .cyber-muyu-toast--bottom-center {
-  left: calc(50vw - 140px);
-  bottom: 20px;
+  left: calc(50vw - 140px) !important;
+  bottom: 20px !important;
 }
 
 .cyber-muyu-toast--top-center {
-  left: calc(50vw - 140px);
-  top: 20px;
+  left: calc(50vw - 140px) !important;
+  top: 20px !important;
+}
+
+.cyber-muyu-toast--leaving {
+  opacity: 0;
+  transform: translate3d(0, -8px, 0) scale(0.96);
+  transition:
+    opacity 0.2s ease,
+    transform 0.2s ease;
 }
 
 .cyber-muyu-stage {
-  position: relative;
-  width: 280px;
-  height: 220px;
+  position: relative !important;
+  display: block !important;
+  width: 280px !important;
+  height: 220px !important;
   transform: translateZ(0);
   animation: cyberMuyuStageIn 2.2s cubic-bezier(0.2, 0.9, 0.25, 1) forwards;
 }
@@ -75,10 +84,11 @@
 }
 
 .cyber-muyu-icon-surface {
-  position: absolute;
-  inset: 8px;
-  overflow: hidden;
-  border-radius: 34px;
+  position: absolute !important;
+  display: block !important;
+  inset: 8px !important;
+  overflow: hidden !important;
+  border-radius: 34px !important;
   background:
     linear-gradient(120deg, rgba(255, 255, 255, 0.12) 0 13%, transparent 13% 28%, rgba(255, 255, 255, 0.08) 28% 42%, transparent 42%),
     linear-gradient(180deg, #ff8358 0%, #f45f37 52%, #e84a2d 100%);
@@ -100,7 +110,8 @@
 }
 
 .cyber-muyu-wave {
-  position: absolute;
+  position: absolute !important;
+  display: block !important;
   top: 35%;
   left: 50%;
   z-index: 1;
@@ -116,7 +127,8 @@
 }
 
 .cyber-muyu-aura {
-  position: absolute;
+  position: absolute !important;
+  display: block !important;
   left: 96px;
   top: 98px;
   width: 132px;
@@ -131,7 +143,8 @@
 }
 
 .cyber-muyu-impact-flash {
-  position: absolute;
+  position: absolute !important;
+  display: block !important;
   left: 151px;
   top: 80px;
   z-index: 7;
@@ -149,7 +162,8 @@
 }
 
 .cyber-muyu-particles {
-  position: absolute;
+  position: absolute !important;
+  display: block !important;
   left: 178px;
   top: 90px;
   z-index: 6;
@@ -159,10 +173,10 @@
 }
 
 .cyber-muyu-particle {
-  position: absolute;
+  position: absolute !important;
   left: 0;
   top: 0;
-  display: block;
+  display: block !important;
   color: #e9fff0;
   font-size: 14px;
   font-weight: 950;
@@ -206,13 +220,13 @@
 }
 
 .cyber-muyu-bowl {
-  position: absolute;
+  position: absolute !important;
   left: 45px;
   top: 78px;
-  width: 168px;
-  height: auto;
-  display: block;
-  border: 0;
+  width: 168px !important;
+  height: auto !important;
+  display: block !important;
+  border: 0 !important;
   user-select: none;
   filter: drop-shadow(0 14px 12px rgba(74, 22, 11, 0.28));
   z-index: 2;
@@ -221,7 +235,8 @@
 }
 
 .cyber-muyu-hammer {
-  position: absolute;
+  position: absolute !important;
+  display: block !important;
   left: 166px;
   top: 39px;
   width: 150px;
@@ -232,7 +247,8 @@
 }
 
 .cyber-muyu-hammer-handle {
-  position: absolute;
+  position: absolute !important;
+  display: block !important;
   left: 20px;
   top: 31px;
   width: 126px;
@@ -249,7 +265,8 @@
 }
 
 .cyber-muyu-hammer-head {
-  position: absolute;
+  position: absolute !important;
+  display: block !important;
   left: 0;
   top: 15px;
   width: 38px;
@@ -265,14 +282,15 @@
 }
 
 .cyber-muyu-reward-float {
-  position: absolute;
+  position: absolute !important;
+  display: block !important;
   left: 28px;
   top: 48px;
   color: #ffe7b0;
   font-size: 26px;
   font-weight: 950;
   line-height: 1.1;
-  white-space: nowrap;
+  white-space: nowrap !important;
   text-shadow:
     0 2px 0 rgba(119, 36, 18, 0.45),
     0 0 14px rgba(255, 235, 170, 0.5);
@@ -303,10 +321,10 @@
 }
 
 .cyber-muyu-reward-stack {
-  position: absolute;
+  position: absolute !important;
   left: 27px;
   top: 70px;
-  display: grid;
+  display: grid !important;
   gap: 0;
   color: rgba(255, 230, 181, 0.68);
   font-size: 22px;
@@ -318,7 +336,7 @@
 }
 
 .cyber-muyu-reward-stack span {
-  display: block;
+  display: block !important;
 }
 
 .cyber-muyu-reward-stack--rare {
@@ -330,7 +348,8 @@
 }
 
 .cyber-muyu-caption {
-  position: absolute;
+  position: absolute !important;
+  display: block !important;
   left: 28px;
   right: 24px;
   bottom: 4px;
@@ -339,9 +358,9 @@
   font-weight: 850;
   line-height: 1.18;
   text-align: center;
-  white-space: nowrap;
-  overflow: hidden;
-  text-overflow: ellipsis;
+  white-space: nowrap !important;
+  overflow: hidden !important;
+  text-overflow: ellipsis !important;
   text-shadow:
     0 1px 0 rgba(119, 36, 18, 0.54),
     0 0 10px rgba(255, 202, 92, 0.28);
@@ -760,6 +779,12 @@ body.cyber-muyu-popup {
   min-height: 48px;
   padding: 10px 0;
   border-bottom: 1px solid rgba(148, 163, 184, 0.12);
+}
+
+.recent-item > div,
+.rule-item > div {
+  min-width: 0;
+  overflow: hidden;
 }
 
 .recent-host,

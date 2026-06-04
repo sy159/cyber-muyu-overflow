@@ -30,7 +30,10 @@
   window.renderCyberMuyuToast = function renderCyberMuyuToast(payload = {}) {
     const previous = document.querySelector(".cyber-muyu-toast");
     if (previous) {
-      previous.remove();
+      previous.classList.add("cyber-muyu-toast--leaving");
+      window.setTimeout(() => {
+        previous.remove();
+      }, 220);
     }
 
     const position = POSITIONS.has(payload.position) ? payload.position : "bottom-right";

@@ -60,6 +60,7 @@
     elements.saveRuleButton.addEventListener("click", saveRuleFromForm);
     elements.cancelEditButton.addEventListener("click", clearRuleForm);
     elements.ruleSearch.addEventListener("input", renderRules);
+    elements.rulesList.addEventListener("click", handleRulesListClick);
     elements.ruleListType.addEventListener("change", () => {
       clearRuleForm();
       renderRules();
@@ -102,7 +103,6 @@
   async function loadSettings() {
     const stored = await chrome.storage.local.get(CyberMuyuRules.SETTINGS_KEY);
     settings = CyberMuyuRules.normalizeSettings(stored[CyberMuyuRules.SETTINGS_KEY]);
-    await persistSettings();
   }
 
   async function persistSettings() {
@@ -115,7 +115,7 @@
   async function renderDashboard() {
     const today = getTodayKey();
     const stored = await chrome.storage.local.get([DAILY_KEY, TOTAL_KEY, RECENT_HITS_KEY]);
-    const todayRecord = await getSyncedDailyRecord(stored[DAILY_KEY], today);
+    const todayRecord = getDisplayDailyRecord(stored[DAILY_KEY], today);
     const todayCount = Number(todayRecord.count || 0);
     const totalCount = Number(stored[TOTAL_KEY] || 0);
     const money = todayCount * VALUE_PER_MOYU;
@@ -181,9 +181,15 @@
       </div>
     `).join("");
 
-    Array.from(elements.rulesList.querySelectorAll("button")).forEach((button) => {
-      button.addEventListener("click", () => handleRuleAction(button.dataset.action, button.dataset.id));
-    });
+  }
+
+  function handleRulesListClick(event) {
+    const button = event.target.closest("button");
+    if (!button || !elements.rulesList.contains(button)) {
+      return;
+    }
+
+    handleRuleAction(button.dataset.action, button.dataset.id);
   }
 
   async function handleRuleAction(action, id) {
@@ -284,13 +290,15 @@
     Object.entries(elements.panels).forEach(([panelName, panel]) => {
       panel.classList.toggle("is-active", panelName === name);
     });
+
+    if (name === "dashboard") {
+      renderDashboard();
+    }
   }
 
-  async function getSyncedDailyRecord(record, today) {
+  function getDisplayDailyRecord(record, today) {
     if (!record || record.date !== today) {
-      const freshRecord = { date: today, count: 0 };
-      await chrome.storage.local.set({ [DAILY_KEY]: freshRecord });
-      return freshRecord;
+      return { date: today, count: 0 };
     }
 
     return {
@@ -308,6 +316,18 @@
   }
 
   function getCultivationRank(count) {
+    if (count >= 1000) {
+      return {
+        name: "无上天道·资本克星"
+      };
+    }
+
+    if (count >= 500) {
+      return {
+        name: "独占因果·带薪飞升"
+      };
+    }
+
     if (count > 200) {
       return {
         name: "大乘期赛博真仙"

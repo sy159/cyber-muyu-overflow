@@ -12,6 +12,7 @@ importScripts("rules.js");
   const MAX_RECENT_HITS = 8;
   const runtimeCooldown = new Map();
   const recentNavigations = new Map();
+  const navigationCleanupTimers = new Map();
   let storageMutationQueue = Promise.resolve();
   const REWARD_TOKENS = [
     { label: "快乐 +1", rarity: "common" },
@@ -216,12 +217,19 @@ importScripts("rules.js");
       timestamp: now
     });
 
-    setTimeout(() => {
+    const previousCleanupTimer = navigationCleanupTimers.get(key);
+    if (previousCleanupTimer) {
+      clearTimeout(previousCleanupTimer);
+    }
+
+    const cleanupTimer = setTimeout(() => {
       const latest = recentNavigations.get(key);
       if (latest?.url === url && latest.timestamp === now) {
         recentNavigations.delete(key);
       }
+      navigationCleanupTimers.delete(key);
     }, NAVIGATION_DEDUPE_MS);
+    navigationCleanupTimers.set(key, cleanupTimer);
 
     return false;
   }
@@ -276,6 +284,8 @@ importScripts("rules.js");
   }
 
   function isRuntimeCoolingDown(cooldownKey, now) {
+    pruneRuntimeCooldown(now);
+
     const lastRuntimeTrigger = Number(runtimeCooldown.get(cooldownKey) || 0);
     return now - lastRuntimeTrigger < SAME_PAGE_COOLDOWN_MS;
   }
@@ -285,6 +295,14 @@ importScripts("rules.js");
     setTimeout(() => {
       runtimeCooldown.delete(cooldownKey);
     }, SAME_PAGE_COOLDOWN_MS);
+  }
+
+  function pruneRuntimeCooldown(now) {
+    runtimeCooldown.forEach((timestamp, cooldownKey) => {
+      if (now - Number(timestamp || 0) >= SAME_PAGE_COOLDOWN_MS) {
+        runtimeCooldown.delete(cooldownKey);
+      }
+    });
   }
 
   function createToastPayload(count, evaluation, position) {

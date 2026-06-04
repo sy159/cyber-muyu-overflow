@@ -30,16 +30,18 @@ async function main() {
   assert(background.includes("evaluateTab(tabId, targetUrl)"), "background must evaluate the fresh target URL");
   assert(background.includes("isBrowserInternalUrl"), "background must filter browser-internal URLs before evaluation");
   assert(background.includes("shouldSkipDuplicateNavigation"), "background must skip duplicate loading/complete navigation callbacks");
+  assert(background.includes("navigationCleanupTimers"), "background must track navigation cleanup timers per tab");
+  assert(background.includes("clearTimeout(previousCleanupTimer)"), "background must clear stale navigation cleanup timers before scheduling a new one");
   assert(/async function injectToast[\s\S]*try \{[\s\S]*chrome\.scripting\.insertCSS[\s\S]*\} catch \(error\) \{[\s\S]*\}/.test(background), "injectToast must catch protected-page injection failures");
   assert(background.includes("getDailyState"), "background must normalize daily state and cooldown together");
   assert(background.includes("lastTrigger: {}"), "background must clear cooldown history when the day rolls over");
   assert(background.includes("enqueueStorageMutation"), "background must serialize storage mutations to avoid MV3 race conditions");
   assert(background.includes("markRuntimeCooldown"), "background must mark runtime cooldown only after a hit is accepted");
   assert(background.includes("compactLastTrigger"), "background must compact stored cooldown history");
-  assert(/function isRuntimeCoolingDown[\s\S]*return now - lastRuntimeTrigger < SAME_PAGE_COOLDOWN_MS;[\s\S]*\}/.test(background), "runtime cooldown check must be read-only");
+  assert(/function isRuntimeCoolingDown[\s\S]*pruneRuntimeCooldown\(now\)[\s\S]*return now - lastRuntimeTrigger < SAME_PAGE_COOLDOWN_MS;[\s\S]*\}/.test(background), "runtime cooldown check must prune stale entries before reading");
   assert(/function fillToastTemplate\(template, count, reward\) \{[\s\S]*typeof template !== "string"/.test(background), "toast template formatting must guard non-string templates");
   assert(/function markRuntimeCooldown[\s\S]*setTimeout[\s\S]*runtimeCooldown\.delete\(cooldownKey\)/.test(background), "runtime cooldown entries must auto-release after the cooldown window");
-  assert(!background.includes("pruneRuntimeCooldown"), "runtime cooldown must not rely on passive pruning only");
+  assert(background.includes("function pruneRuntimeCooldown"), "runtime cooldown must support passive pruning when timers are lost");
   assert(background.includes("shouldPersistNormalizedSettings"), "background must avoid clobbering saved settings on every navigation");
   assert(background.includes("TOAST_MESSAGES"), "background must define randomized toast copy");
   assert(background.includes("REWARD_TOKENS"), "background must randomize reward tokens");
@@ -67,6 +69,8 @@ async function main() {
   assert(content.includes("toast.remove()"), "content cleanup must remove the reminder DOM node");
   assert(content.includes("chrome.runtime.getURL(\"assets/muyu.svg\")"), "content must load the realistic woodfish asset through chrome.runtime.getURL");
   assert(!content.includes("cyber-muyu-overflow-root"), "content must not render the old blocking overlay");
+  assert(content.includes("cyber-muyu-toast--leaving"), "content must fade out previous toast instead of hard-removing it");
+  assert(/previous\.classList\.add\("cyber-muyu-toast--leaving"\)[\s\S]*window\.setTimeout\(\(\) => \{[\s\S]*previous\.remove\(\)/.test(content), "content must delay removal of a leaving toast");
   assert(rules.includes("DEFAULT_RULES"), "rules module must define default rules");
   assert(rules.includes("regex"), "rules module must support regex rules");
   assert(rules.includes("exclude"), "rules module must support work exclusions");
@@ -129,10 +133,11 @@ async function main() {
   assert(muyuAsset.includes("muyu-tail"), "woodfish asset must include a distinct tail shape");
   assert(muyuAsset.includes("muyu-mouth"), "woodfish asset must include the long slanted mouth shape");
   assert(muyuAsset.includes("filter id=\"softShadow\""), "woodfish asset must include soft shadows for depth");
-  assert(/width:\s*280px;/.test(toastBlock), "muyu reminder must have enough room for a woodfish and hammer");
-  assert(/width:\s*168px;/.test(bowlBlock), "woodfish asset must be large enough to read as the main subject");
-  assert(/pointer-events:\s*none;/.test(toastBlock), "toast must not block page interactions");
-  assert(/contain:\s*layout paint style;/.test(toastBlock), "toast must isolate layout and paint");
+  assert(/position:\s*fixed !important;/.test(toastBlock), "muyu reminder root must resist host page positioning overrides");
+  assert(/width:\s*280px !important;/.test(toastBlock), "muyu reminder must have enough room for a woodfish and hammer");
+  assert(/width:\s*168px !important;/.test(bowlBlock), "woodfish asset must be large enough to read as the main subject");
+  assert(/pointer-events:\s*none !important;/.test(toastBlock), "toast must not block page interactions");
+  assert(/contain:\s*layout paint style !important;/.test(toastBlock), "toast must isolate layout and paint");
   assert(!/background:/.test(toastBlock), "muyu reminder root must not render a rectangular card background");
   assert(!/border:/.test(toastBlock), "muyu reminder root must not render a rectangular card border");
   assert(!/box-shadow:/.test(toastBlock), "muyu reminder root must not render a card shadow");
@@ -176,7 +181,12 @@ async function main() {
   assert(styles.includes("@keyframes cyberMuyuRewardStack"), "muyu reward stack must keep the prominent stacked text animation");
   assert(styles.includes("cyberMuyuStageIn 2.2s"), "muyu reminder animation should use the adjusted visible lifetime");
   assert(getCssBlock(styles, ".cyber-muyu-reward-stack").includes("font-size: 22px"), "reward stack must keep the previous readable text size");
+  assert(getCssBlock(styles, ".cyber-muyu-reward-float").includes("white-space: nowrap !important"), "reward text must resist host page wrapping overrides");
+  assert(getCssBlock(styles, ".cyber-muyu-bowl").includes("display: block !important"), "woodfish asset display must resist host page overrides");
+  assert(getCssBlock(styles, ".cyber-muyu-reward-stack span").includes("display: block !important"), "reward stack spans must resist host page display overrides");
   assert(getCssBlock(styles, ".cyber-muyu-caption").includes("bottom: 4px"), "caption must stay low enough to avoid overlapping the woodfish");
+  assert(getCssBlock(styles, ".recent-item > div,\n.rule-item > div").includes("min-width: 0"), "popup list text wrappers must be allowed to shrink");
+  assert(getCssBlock(styles, ".recent-item > div,\n.rule-item > div").includes("overflow: hidden"), "popup list text wrappers must clip long content");
 
   assert(popup.includes('const LAST_TRIGGER_KEY = "lastMoyuTriggerAt";'), "popup must know cooldown storage key");
   assert(popupHtml.includes("reminderModeSelect"), "popup must expose reminder mode selection");
@@ -189,6 +199,11 @@ async function main() {
   assert(popup.includes("hour12: false"), "popup recent-hit times must use fixed 24-hour formatting");
   assert(popup.includes("CyberMuyuRules.createRuleId()"), "popup must use the shared rule id generator");
   assert(popup.includes("chrome.storage.onChanged.addListener"), "popup must refresh dashboard when storage changes");
+  assert(popup.includes("elements.rulesList.addEventListener(\"click\", handleRulesListClick)"), "popup rules list must use event delegation");
+  assert(!popup.includes("elements.rulesList.querySelectorAll(\"button\")"), "popup must not bind rule buttons after every render");
+  assert(/async function loadSettings\(\) \{\s*const stored = await chrome\.storage\.local\.get\(CyberMuyuRules\.SETTINGS_KEY\);\s*settings = CyberMuyuRules\.normalizeSettings\(stored\[CyberMuyuRules\.SETTINGS_KEY\]\);\s*\}/.test(popup), "popup loadSettings must not blindly rewrite settings on init");
+  assert(!popup.includes("async function getSyncedDailyRecord"), "dashboard rendering must be read-only and must not write daily records");
+  assert(popup.includes("无上天道"), "popup rank logic must include a 1000+ late-game title");
   assert(!/function createRuleId\(\)/.test(popup), "popup must not duplicate rule id generation");
   await runPopupRegressionChecks(popup);
   await runBackgroundRegressionChecks(background, rules);
@@ -356,7 +371,14 @@ function runPopupRegressionChecks(popup) {
   const storageChangeListeners = [];
   const elementStore = new Map();
   const tabButtons = ["dashboard", "rules", "settings"].map((tab) => createElement(`tab-${tab}`, { tab }));
+  let settingsWriteCount = 0;
+  let dailyWriteCount = 0;
   const storage = {
+    cyberMuyuSettings: {
+      ...loadRuleEngine(fs.readFileSync("rules.js", "utf8")).createDefaultSettings(),
+      rules: [{ id: "rule-1", type: "domain", pattern: "example.com", name: "Example", category: "custom", enabled: true, builtIn: false }],
+      exclusions: []
+    },
     moyuDaily: { date: "1999-12-31", count: 42 },
     moyuCount: 42,
     lastMoyuTriggerAt: { "1:https://example.com": 123456 },
@@ -388,7 +410,11 @@ function runPopupRegressionChecks(popup) {
       },
       getElementById(id) {
         if (!elementStore.has(id)) {
-          elementStore.set(id, createElement(id));
+          const element = createElement(id);
+          if (id === "ruleListType") {
+            element.value = "rules";
+          }
+          elementStore.set(id, element);
         }
         return elementStore.get(id);
       }
@@ -403,12 +429,19 @@ function runPopupRegressionChecks(popup) {
         local: {
           async get(keys) {
             const result = {};
-            for (const key of keys) {
+            const requestedKeys = Array.isArray(keys) ? keys : [keys];
+            for (const key of requestedKeys) {
               result[key] = storage[key];
             }
             return result;
           },
           async set(values) {
+            if (Object.prototype.hasOwnProperty.call(values, "cyberMuyuSettings")) {
+              settingsWriteCount += 1;
+            }
+            if (Object.prototype.hasOwnProperty.call(values, "moyuDaily")) {
+              dailyWriteCount += 1;
+            }
             Object.assign(storage, values);
           }
         }
@@ -422,8 +455,9 @@ function runPopupRegressionChecks(popup) {
   return Promise.resolve()
     .then(() => listeners.DOMContentLoaded())
     .then(() => {
-      assert(storage.moyuDaily.date === "2000-01-01", "popup must persist a new daily record after date rollover");
-      assert(storage.moyuDaily.count === 0, "popup must persist rollover count as zero");
+      assert(settingsWriteCount === 0, "popup init must not rewrite valid settings");
+      assert(dailyWriteCount === 0, "dashboard render must not rewrite stale daily records");
+      assert(elementStore.get("todayCount").textContent === "0", "popup must display zero for stale daily records without writing storage");
       assert(storageChangeListeners.length === 1, "popup must register one storage change listener");
       storage.moyuDaily = { date: "2000-01-01", count: 7 };
       storage.moyuCount = 9;
@@ -438,6 +472,18 @@ function runPopupRegressionChecks(popup) {
     .then(() => {
       assert(elementStore.get("todayCount").textContent === "7", "popup must live-refresh today's count from storage changes");
       assert(elementStore.get("totalCount").textContent === "9 动", "popup must live-refresh total count from storage changes");
+      return elementStore.get("rulesList").clickDelegatedRuleButton("toggle", "rule-1");
+    })
+    .then(() => {
+      assert(storage.cyberMuyuSettings.rules.find((rule) => rule.id === "rule-1").enabled === false, "rule list event delegation must toggle a rule");
+      storage.moyuDaily = { date: "2000-01-01", count: 11 };
+      storage.moyuCount = 13;
+      tabButtons.find((button) => button.dataset.tab === "dashboard").click();
+      return delay(0);
+    })
+    .then(() => {
+      assert(elementStore.get("todayCount").textContent === "11", "dashboard tab activation must refresh today's count");
+      assert(elementStore.get("totalCount").textContent === "13 动", "dashboard tab activation must refresh total count");
       return elementStore.get("resetButton").click();
     })
     .then(() => {
@@ -472,8 +518,30 @@ function createElement(id, dataset = {}) {
     classList: {
       toggle() {}
     },
+    click() {
+      if (typeof this.listeners.click === "function") {
+        return this.listeners.click({ target: this });
+      }
+
+      return undefined;
+    },
+    clickDelegatedRuleButton(action, id) {
+      if (typeof this.listeners.click !== "function") {
+        return Promise.resolve();
+      }
+
+      const button = {
+        dataset: { action, id },
+        closest(selector) {
+          return selector === "button" ? button : null;
+        }
+      };
+
+      return this.listeners.click({ target: button });
+    },
+    listeners: {},
     addEventListener(event, handler) {
-      this[event] = handler;
+      this.listeners[event] = handler;
     },
     setAttribute(name, value) {
       this.attributes[name] = value;
@@ -483,6 +551,9 @@ function createElement(id, dataset = {}) {
     },
     removeAttribute(name) {
       delete this.attributes[name];
+    },
+    contains() {
+      return true;
     },
     appendChild(child) {
       this.children.push(child);

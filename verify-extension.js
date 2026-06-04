@@ -55,6 +55,12 @@ async function main() {
   assert(!/(有钱|余额|钱包|奶茶|奖金|白嫖资本|房贷|工资)/.test(background), "reward copy must not include money-themed wording");
   assert(background.includes('rarity: "rare"'), "reward tokens should support rare styling");
   assert(background.includes('rarity: "epic"'), "reward tokens should support epic styling");
+  assert(background.includes('rarity: "legendary"'), "reward tokens should support legendary styling");
+  assert(background.includes('rarity: "easter"'), "reward tokens should support rare easter egg styling");
+  assert(background.includes("pickRewardToken"), "background must use weighted reward rarity selection");
+  assert(background.includes("getRarityRoll"), "background reward rarity selection must be testable");
+  assert(background.includes("getRarityLabel"), "background toast titles must visibly label reward rarity");
+  assert(background.includes("rarity: \"legendary\""), "preview payload must be able to force a visible rarity for testing");
   assert(background.includes("createToastPayload"), "background must build toast payloads through a helper");
   assert(!background.includes('settings.toastMode === "fixed"'), "background must not keep a redundant fixed toast mode");
   assert(background.includes('settings.reminderMode !== "silent"'), "background must support silent counting");
@@ -158,6 +164,9 @@ async function main() {
   assert((content.match(/glyph:/g) || []).length >= 16, "particle burst should include enough particles to feel visible");
   assert(content.includes('kind: "coin"'), "particle burst should include coin-like particles without money text");
   assert(content.includes("createParticle"), "content renderer must create lightweight DOM particles");
+  assert(content.includes("getParticleMultiplier"), "content renderer must scale particle count by reward rarity");
+  assert(content.includes('"legendary"') && content.includes('"easter"'), "content renderer must recognize legendary and easter rarities");
+  assert(content.includes("cyber-muyu-stage--${rarity}"), "content renderer must expose rarity-specific stage classes");
   assert(!content.includes('glyph: "¥"'), "particles must not include money symbols");
   assert(!content.includes('glyph: "$"'), "particles must not include dollar symbols");
   assert(!content.includes("有钱 +1"), "content fallback reward must not use money-themed copy");
@@ -176,6 +185,14 @@ async function main() {
   assert(getCssBlock(styles, "@keyframes cyberMuyuRewardFloat").includes("var(--reward-curve-x"), "reward text must travel along a curved path");
   assert(styles.includes(".cyber-muyu-reward-float--rare"), "reward text must support rare styling");
   assert(styles.includes(".cyber-muyu-reward-float--epic"), "reward text must support epic styling");
+  assert(styles.includes(".cyber-muyu-reward-float--legendary"), "reward text must support legendary styling");
+  assert(styles.includes(".cyber-muyu-reward-float--easter"), "reward text must support easter egg styling");
+  assert(styles.includes(".cyber-muyu-stage--rare .cyber-muyu-bowl"), "rare hits must visibly alter the woodfish hit feedback");
+  assert(styles.includes(".cyber-muyu-stage--epic .cyber-muyu-hammer-head"), "epic hits must visibly alter the hammer feedback");
+  assert(styles.includes(".cyber-muyu-stage--legendary .cyber-muyu-wave"), "legendary hits must have stronger post-impact waves");
+  assert(styles.includes(".cyber-muyu-stage--easter .cyber-muyu-impact-flash"), "easter hits must have a distinct impact flash");
+  assert(styles.includes("@keyframes cyberMuyuRareBowlKnock"), "rare hits must use a distinct bowl animation timeline");
+  assert(styles.includes("@keyframes cyberMuyuEpicBowlKnock"), "epic hits must use a distinct bowl animation timeline");
   assert(styles.includes("@keyframes cyberMuyuParticleBurst"), "muyu impact must include particle burst animation");
   assert(styles.includes("@keyframes cyberMuyuWaveExpand"), "muyu impact must include a dedicated expanding wave animation");
   assert(styles.includes("@keyframes cyberMuyuRewardStack"), "muyu reward stack must keep the prominent stacked text animation");
@@ -204,6 +221,8 @@ async function main() {
   assert(/async function loadSettings\(\) \{\s*const stored = await chrome\.storage\.local\.get\(CyberMuyuRules\.SETTINGS_KEY\);\s*settings = CyberMuyuRules\.normalizeSettings\(stored\[CyberMuyuRules\.SETTINGS_KEY\]\);\s*\}/.test(popup), "popup loadSettings must not blindly rewrite settings on init");
   assert(!popup.includes("async function getSyncedDailyRecord"), "dashboard rendering must be read-only and must not write daily records");
   assert(popup.includes("无上天道"), "popup rank logic must include a 1000+ late-game title");
+  assert(popup.includes("摸鱼天尊"), "popup rank logic must include deeper post-200 progression");
+  assert(popup.includes("工位外神"), "popup rank logic must include a 2000+ endgame title");
   assert(!/function createRuleId\(\)/.test(popup), "popup must not duplicate rule id generation");
   await runPopupRegressionChecks(popup);
   await runBackgroundRegressionChecks(background, rules);

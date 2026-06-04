@@ -316,9 +316,27 @@
   }
 
   function getCultivationRank(count) {
+    if (count >= 2000) {
+      return {
+        name: "工位外神·摸鱼无量"
+      };
+    }
+
+    if (count >= 1500) {
+      return {
+        name: "摸鱼天尊·低调巡游"
+      };
+    }
+
     if (count >= 1000) {
       return {
         name: "无上天道·资本克星"
+      };
+    }
+
+    if (count >= 777) {
+      return {
+        name: "七七七功德暴击"
       };
     }
 
@@ -328,9 +346,21 @@
       };
     }
 
+    if (count >= 351) {
+      return {
+        name: "化神期工位隐者"
+      };
+    }
+
     if (count > 200) {
       return {
         name: "大乘期赛博真仙"
+      };
+    }
+
+    if (count >= 101) {
+      return {
+        name: "出窍期摸鱼尊者"
       };
     }
 

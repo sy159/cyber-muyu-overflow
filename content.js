@@ -7,7 +7,7 @@
 
   const TOAST_LIFETIME_MS = 2200;
   const POSITIONS = new Set(["bottom-right", "bottom-left", "top-right", "top-left", "bottom-center", "top-center"]);
-  const RARITIES = new Set(["common", "rare", "epic"]);
+  const RARITIES = new Set(["common", "rare", "epic", "legendary", "easter"]);
   const PARTICLE_PRESETS = [
     { glyph: "", kind: "coin", x: -52, y: -48 },
     { glyph: "1", x: -24, y: -64 },
@@ -45,7 +45,7 @@
     toast.setAttribute("aria-live", "polite");
 
     const stage = document.createElement("div");
-    stage.className = "cyber-muyu-stage";
+    stage.className = `cyber-muyu-stage cyber-muyu-stage--${rarity}`;
 
     const iconSurface = document.createElement("div");
     iconSurface.className = "cyber-muyu-icon-surface";
@@ -61,7 +61,7 @@
 
     const particles = document.createElement("div");
     particles.className = "cyber-muyu-particles";
-    PARTICLE_PRESETS.forEach((preset, index) => {
+    createParticles(rarity).forEach((preset, index) => {
       particles.appendChild(createParticle(preset, index, rarity));
     });
 
@@ -119,6 +119,43 @@
     particle.style.setProperty("--particle-delay", `${index * 18}ms`);
     particle.style.setProperty("--particle-spin", `${index % 2 === 0 ? 28 : -28}deg`);
     return particle;
+  }
+
+  function createParticles(rarity) {
+    const multiplier = getParticleMultiplier(rarity);
+    if (multiplier <= 1) {
+      return PARTICLE_PRESETS;
+    }
+
+    const particles = [];
+    for (let round = 0; round < multiplier; round += 1) {
+      PARTICLE_PRESETS.forEach((preset, index) => {
+        const offsetSeed = (round * 7) + index;
+        particles.push({
+          ...preset,
+          x: preset.x + ((offsetSeed % 5) - 2) * 8,
+          y: preset.y - (round * 12) + ((offsetSeed % 3) - 1) * 5
+        });
+      });
+    }
+
+    return particles;
+  }
+
+  function getParticleMultiplier(rarity) {
+    if (rarity === "easter") {
+      return 3;
+    }
+
+    if (rarity === "legendary") {
+      return 2;
+    }
+
+    if (rarity === "epic") {
+      return 2;
+    }
+
+    return 1;
   }
 
   function getRewardCurveX() {

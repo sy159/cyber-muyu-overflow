@@ -60,7 +60,23 @@ importScripts("rules.js");
     { label: "今日无事 +1", rarity: "epic" },
     { label: "代码免疫 +1", rarity: "epic" },
     { label: "灵魂出窍 +1", rarity: "epic" },
-    { label: "截止期延后 +1", rarity: "epic" }
+    { label: "截止期延后 +1", rarity: "epic" },
+    { label: "摸鱼天命 +1", rarity: "legendary" },
+    { label: "静默飞升 +1", rarity: "legendary" },
+    { label: "工位无敌 +1", rarity: "legendary" },
+    { label: "天选下班人 +1", rarity: "legendary" },
+    { label: "需求退散 +1", rarity: "legendary" },
+    { label: "老板离线 +1", rarity: "legendary" },
+    { label: "无事发生 +1", rarity: "easter" },
+    { label: "宇宙摸鱼许可 +1", rarity: "easter" },
+    { label: "此刻禁止内耗 +1", rarity: "easter" }
+  ];
+  const REWARD_RARITY_WEIGHTS = [
+    { rarity: "easter", threshold: 0.008 },
+    { rarity: "legendary", threshold: 0.04 },
+    { rarity: "epic", threshold: 0.16 },
+    { rarity: "rare", threshold: 0.42 },
+    { rarity: "common", threshold: 1 }
   ];
   const TOAST_MESSAGES = [
     { title: "今日敲击到账", detail: "{reward} · 今日 {count} 动" },
@@ -87,7 +103,10 @@ importScripts("rules.js");
     { title: "你成功绕开一段内耗", detail: "{reward} · 线路稳定" },
     { title: "老板雷达进入盲区", detail: "{reward} · 动作轻得像缓存" },
     { title: "需求文档暂时闭嘴", detail: "{reward} · 呼吸恢复正常" },
-    { title: "打工魂短暂开小差", detail: "{reward} · 肉身仍在工位" }
+    { title: "打工魂短暂开小差", detail: "{reward} · 肉身仍在工位" },
+    { title: "彩蛋：老板雷达进入维护", detail: "{reward} · 请保持面部平静" },
+    { title: "彩蛋：工位结界升级成功", detail: "{reward} · 方圆三米无需求" },
+    { title: "罕见掉落：今日心态稳住了", detail: "{reward} · 这很不容易" }
   ];
 
   chrome.runtime.onInstalled.addListener(async () => {
@@ -124,8 +143,10 @@ importScripts("rules.js");
     }
 
     injectToast(tabId, {
-      title: "今日敲击到账",
-      detail: "快乐 +1 · 今日预览",
+      title: "[传说] 今日敲击到账",
+      detail: "摸鱼天命 +1 · 今日预览",
+      reward: "摸鱼天命 +1",
+      rarity: "legendary",
       category: "preview"
     }).then(() => sendResponse({ ok: true }));
 
@@ -307,9 +328,9 @@ importScripts("rules.js");
 
   function createToastPayload(count, evaluation, position) {
     const template = getRandomItem(TOAST_MESSAGES);
-    const rewardToken = normalizeRewardToken(getRandomItem(REWARD_TOKENS));
+    const rewardToken = pickRewardToken();
     return {
-      title: fillToastTemplate(template.title, count, rewardToken.label),
+      title: `${getRarityLabel(rewardToken.rarity)}${fillToastTemplate(template.title, count, rewardToken.label)}`,
       detail: fillToastTemplate(template.detail, count, rewardToken.label),
       reward: rewardToken.label,
       rarity: rewardToken.rarity,
@@ -328,8 +349,35 @@ importScripts("rules.js");
 
     return {
       label: String(token?.label || "快乐 +1"),
-      rarity: ["common", "rare", "epic"].includes(token?.rarity) ? token.rarity : "common"
+      rarity: ["common", "rare", "epic", "legendary", "easter"].includes(token?.rarity) ? token.rarity : "common"
     };
+  }
+
+  function pickRewardToken() {
+    const rarity = pickRewardRarity(getRarityRoll());
+    const candidates = REWARD_TOKENS.filter((token) => token.rarity === rarity);
+    return normalizeRewardToken(getRandomItem(candidates.length ? candidates : REWARD_TOKENS));
+  }
+
+  function pickRewardRarity(roll) {
+    const normalizedRoll = Number.isFinite(roll) ? Math.max(0, Math.min(1, roll)) : 1;
+    const matched = REWARD_RARITY_WEIGHTS.find((entry) => normalizedRoll <= entry.threshold);
+    return matched?.rarity || "common";
+  }
+
+  function getRarityRoll() {
+    return Math.random();
+  }
+
+  function getRarityLabel(rarity) {
+    const labels = {
+      rare: "[稀有] ",
+      epic: "[史诗] ",
+      legendary: "[传说] ",
+      easter: "[彩蛋] "
+    };
+
+    return labels[rarity] || "";
   }
 
   function fillToastTemplate(template, count, reward) {
